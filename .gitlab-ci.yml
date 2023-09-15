@@ -1,0 +1,32 @@
+image:
+  name: registry.gitlab.com/gitlab-org/terraform-images/stable:latest
+  entrypoint: ["/bin/sh", "-c"]
+
+stages:
+- plan
+- apply
+- destroy
+
+plan_datadog_monitor:
+  stage: plan
+  script:
+  - cd terraform_ci/terraform/datadog/
+  - terraform init --backend=true
+  - terraform plan
+  when: always
+
+apply_datadog_monitor:
+  stage: apply
+  script:
+  - cd terraform_ci/terraform/datadog/
+  - terraform init --backend=true
+  - terraform apply --auto-approve
+  when: manual
+
+destroy_datadog_monitor:
+  stage: destroy
+  script:
+  - cd terraform_ci/terraform/datadog/
+  - terraform init --backend=true
+  - terraform destroy --auto-approve
+  when: manual
